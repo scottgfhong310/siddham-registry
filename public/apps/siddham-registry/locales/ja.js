@@ -57,7 +57,7 @@ I18n.register('ja', {
   'detail.composition': '組字',
   'detail.compNone': '出典にこの字の組字は登録されていません。',
   'detail.compAtomic': '基本字——出典は自分自身までで分解が止まるとしています。',
-  'detail.compPlaceholder': '出典が 〇 で示す空きスロット',
+  'detail.compPlaceholder': 'ここに組件がありますが、登録に指名できる字形がありません（出典は 〇 と表記）',
   'detail.chapter': '悉曇十八章',
   'detail.chapterPos': '位置',
   'detail.chapterAt': '第 {ch} 章 第 {row} 行 第 {col} 列',

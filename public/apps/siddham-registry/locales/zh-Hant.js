@@ -59,7 +59,7 @@ I18n.register('zh-Hant', {
   'detail.composition': '組字',
   'detail.compNone': '來源沒有登錄這個字的組字。',
   'detail.compAtomic': '基本字——來源說它拆到自己為止。',
-  'detail.compPlaceholder': '來源以 〇 標示的空位',
+  'detail.compPlaceholder': '此處有一個組件，但登錄裡沒有可指名的字形（來源標為 〇）',
   'detail.chapter': '悉曇十八章',
   'detail.chapterPos': '位置',
   'detail.chapterAt': '第 {ch} 章 第 {row} 列 第 {col} 欄',

@@ -60,7 +60,7 @@ I18n.register('en', {
   'detail.composition': 'Composition',
   'detail.compNone': 'The source records no composition for this glyph.',
   'detail.compAtomic': 'Base glyph — the source says it decomposes to itself.',
-  'detail.compPlaceholder': 'empty slot marked 〇 in the source',
+  'detail.compPlaceholder': 'a component sits here, but the registry has no nameable glyph for it (marked 〇 in the source)',
   'detail.chapter': 'The Eighteen Chapters',
   'detail.chapterPos': 'Position',
   'detail.chapterAt': 'Chapter {ch}, row {row}, column {col}',

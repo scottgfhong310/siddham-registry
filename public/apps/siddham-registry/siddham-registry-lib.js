@@ -13,7 +13,7 @@
  * ⚠️ 三種「沒有」在本 app 裡意思不同，不可混用（治理 §5 規則 11）：
  *      glyph.syl === null          這個字形本來就沒有音（群組／筆順／咒輪／文章記號）
  *      composition[i] === null     來源沒有登錄組字
- *      composition[i] 含 -1        來源以 〇 標示的空位
+ *      composition[i] 含 -1        來源以 〇 標示：那裡**有**組件，只是登錄裡沒有可指名的字形
  *    ⚠️ 另有第四種，而它最容易被寫錯：`composition[i] === [i]`（組件就是自己）
  *      ＝**基本字**，來源說它拆到自己為止。把它顯示成「一個組件的組字」是錯的。
  *
@@ -132,7 +132,8 @@
    *   'none'      來源沒有登錄組字（468 個）
    *   'atomic'    基本字，來源說它拆到自己為止（57 個）
    *   'composed'  真的可拆（其餘）
-   * parts 的元素：{ index } 或 { placeholder: true }（來源的 〇）
+   * parts 的元素：{ index } 或 { placeholder: true }——後者是來源的 〇：
+   * **那個位置有組件，只是登錄裡沒有可指名的字形**，不是「空位」（治理 Q4，2026-08-17 定案）。
    */
   function compositionOf(ix, i) {
     var arr = ix.composition[i];
