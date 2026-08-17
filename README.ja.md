@@ -45,7 +45,7 @@ Unicode Siddham の表示には影響しません——**Noto Sans Siddham**（S
 
 ```bash
 npm install && npm start        # http://localhost:3000/apps/siddham-registry/
-npm run verify                  # 14 件の契約チェック
+npm run verify                  # 15 件の契約チェック
 ```
 
 本アプリは **nodeapp WebApp ファミリー**の一員です——

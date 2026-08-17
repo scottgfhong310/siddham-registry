@@ -41,7 +41,7 @@ Unicode Siddham 的顯示不受影響——**Noto Sans Siddham**（SIL OFL 1.1�
 
 ```bash
 npm install && npm start        # http://localhost:3000/apps/siddham-registry/
-npm run verify                  # 14 條契約檢查
+npm run verify                  # 15 條契約檢查
 ```
 
 本 app 屬於 **nodeapp WebApp 家族**——

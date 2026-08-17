@@ -217,6 +217,36 @@ check('⑭ 原始碼不含 NUL 位元組', () => {
     return bad.length ? `含 NUL：${bad.join(', ')}` : null;
   });
 
+/**
+ * ⚠️ 這條釘的東西壞掉時**畫面完全正常**：明細卡照樣開得起來、長得對，只有關不掉。
+ *    成因是 Materialize 的 init 對同一個元素跑第二次會先 destroy 舊實例（連同它的
+ *    click／keydown handler）再建一個新的。GlyphDetail 自己 init 了明細卡，控制器若再
+ *    `M.Modal.init(document.querySelectorAll('.modal'))` 掃一次，開卡的就是被丟掉的那一個：
+ *    `open()` 只是加 class ＋ 貼 overlay 所以照樣有效，但活著的那個實例 `isOpen` 恆為
+ *    false ⇒ 「關閉」／點遮罩／ESC 都在 `close()` 第一行早退。
+ *    兩層各擋一半：(a) 控制器不掃全部、(b) 模組不快取實例（換誰來掃都不成立）。
+ */
+check('⑮ 明細卡的 Modal 實例不會被第二次 init 換掉（換掉了就關不起來）', () => {
+    const bad = [];
+    // (a) 兩個控制器都不得掃全部 .modal 重新 init
+    [['siddham-registry.js', SRC.ctrl], ['chapters.js', SRC.chap]].forEach(([name, src]) => {
+      const s = stripComments(src);
+      if (/Modal\.init\s*\(\s*document\.querySelectorAll/.test(s)
+          || /Modal\.init\s*\([^)]*['"][^'"]*\.modal\b/.test(s)) {
+        bad.push(`${name} 掃全部 .modal 重新 init（會 destroy 掉明細卡的實例）`);
+      }
+    });
+    // (b) 明細卡開卡一律走「當下的實例」，不可存成模組變數
+    const d = stripComments(SRC.detail);
+    if (!/M\.Modal\.getInstance\s*\(/.test(d)) bad.push('glyph-detail 沒有用 M.Modal.getInstance 取當下實例');
+    const opens = [...d.matchAll(/([A-Za-z_$][\w$]*)\s*(\(\))?\s*\.open\s*\(\s*\)/g)];
+    if (opens.length < 2) bad.push(`glyph-detail 只找到 ${opens.length} 處 open()（應為 openSyllable／openGlyph 各一）`);
+    opens.forEach((m) => {
+      if (m[2] !== '()' || m[1] !== 'modalInst') bad.push(`glyph-detail 的 ${m[0]} 不是 modalInst().open()`);
+    });
+    return bad.length ? bad.join('；') : null;
+  });
+
 
 // ── selftest：逐條改壞，確認每條真的抓得到 ──────────────────────────────
 const SELFTESTS = [
@@ -265,6 +295,16 @@ const SELFTESTS = [
     fs.writeFileSync(p, Buffer.concat([b, Buffer.from([0])]));
     return () => fs.writeFileSync(p, b);
   }],
+  // ⚠️ 這三個注入正是 2026-08-17 那個「卡片關不掉」的三種寫法，缺一不可：
+  //    第一個是它當初真正的成因，後兩個是模組自保那一層。
+  [15, '控制器改回掃全部 .modal 重新 init', () => patch('siddham-registry.js',
+    "window.M.Modal.init($('font-modal'), { endingTop: '6%' });",
+    "window.M.Modal.init(document.querySelectorAll('.modal'), { endingTop: '6%' });")],
+  [15, '明細卡把實例快取成模組變數', () => patch('glyph-detail.js',
+    'render(); modalInst().open(); },', 'render(); modal.open(); },')],
+  [15, '明細卡不再問當下的實例', () => patch('glyph-detail.js',
+    'return window.M.Modal.getInstance(el) || window.M.Modal.init(el',
+    'return window.M.Modal.init(el')],
 ];
 
 /** 改壞一個檔案，回傳還原函式。⚠️ 會先斷言注入真的改到東西——
@@ -324,7 +364,7 @@ function main() {
     try {
       restore = mutate();
       const fails = runChecks();
-      const hit = fails.some((f) => f[0].startsWith(`${'①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭'[idx - 1]}`));
+      const hit = fails.some((f) => f[0].startsWith(`${'①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮'[idx - 1]}`));
       console.log(`  ${hit ? '✓' : '✗'} #${i + 1} 第 ${idx} 條 — ${desc}`
         + (hit ? '' : `   ← 沒抓到！實際紅的：${fails.map((f) => f[0].slice(0, 3)).join(',') || '（全綠）'}`));
       if (hit) caught++;

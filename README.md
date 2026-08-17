@@ -48,7 +48,7 @@ See [DESIGN.md](./DESIGN.md) §1 for the full reasoning.
 
 ```bash
 npm install && npm start        # http://localhost:3000/apps/siddham-registry/
-npm run verify                  # 14 contract checks
+npm run verify                  # 15 contract checks
 ```
 
 ## Structure

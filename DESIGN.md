@@ -145,9 +145,35 @@ Arial Unicode MS／Helvetica，實測畫得出來）。
 
 ## 8. 契約檢查（`scripts/verify.js`）
 
-14 條，`--selftest` 15 個注入逐一確認**為了對的理由紅**。其中第 ①②③ 條是**授權**——
+15 條，`--selftest` 18 個注入逐一確認**為了對的理由紅**。其中第 ①②③ 條是**授權**——
 家族其他成員沒有這一類檢查，因為只有這支 app 面對「一個顯示得好好的字型，
 但它不該在這裡」的情況。**它壞掉時畫面完全正常。**
+
+### 8.1 第 ⑮ 條：明細卡的 Modal 實例不可被第二次 init 換掉
+
+**症狀是「卡片開得起來、關不掉」，而畫面上一切正常。** 成因：Materialize 的
+`M.Modal.init` 對同一個元素跑第二次會先 `destroy()` 舊實例（連同它的 click／keydown
+handler）再建一個新的，**而握著舊實例的人不會收到任何通知**。
+明細卡是 `glyph-detail.js` 自己 init 的；`siddham-registry.js` 又寫了
+`M.Modal.init(document.querySelectorAll('.modal'))`（為了 `#font-modal`），於是：
+
+- 開卡走的是**已被 destroy 的**那個實例——`open()` 只是加 `open` class ＋ 貼 overlay，照樣有效；
+- 活著的那個實例 `isOpen` 恆為 `false`，而 `close()` 第一行就是 `if (this.isOpen === false) return;`
+  ⇒ **「關閉」／點遮罩／ESC 三條路全部早退**。
+
+⚠️ **對照組就在同一個 repo 裡**：`chapters.html` 用的是同一支 `glyph-detail.js`，
+但 `chapters.js` **沒有**那行掃全部的 init——所以它一直是好的。
+兩頁行為不同而程式碼共用時，差異一定在**呼叫端**。
+
+修法兩層，缺一不可：
+
+1. 控制器**只 init 自己那一個 modal**（`$('font-modal')`），不掃 `.modal`；
+2. `glyph-detail.js` 開卡時才用 `M.Modal.getInstance()` 要**當下**的實例，
+   **不把 init() 的回傳值存成模組變數**。它是兩頁共用的模組，管不到呼叫端會不會再
+   init 一次——**與其正確處理「實例被換掉」的每一種情況，不如讓它不成立**。
+
+第 ⑮ 條兩層各驗一半，三個注入分別對應「控制器掃全部」「快取實例」「不問當下實例」，
+**三者失敗訊息各不相同**（兩個注入報同一句話，等於只有一個注入）。
 
 ⚠️ `--selftest` 的注入會先斷言**真的改到東西**——一個什麼都沒改到的注入，
 與一條失效的檢查，在輸出上長得一模一樣。（第 ⑬ 條就是這樣抓到自己太鬆的：

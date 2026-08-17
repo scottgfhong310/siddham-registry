@@ -14,7 +14,7 @@ CBETA 造字 ↔ **Unicode Siddham** 的對照與反查，另有〈悉曇十八�
 
 ```
 app.js                                   # Express：port 3000；static；/ → 302 /apps/siddham-registry/
-scripts/verify.js                        # 14 條契約檢查（npm run verify；--selftest 15 個注入）
+scripts/verify.js                        # 15 條契約檢查（npm run verify；--selftest 18 個注入）
 public/apps/siddham-registry/
 ├─ index.html · chapters.html            # 兩頁：字形對照／悉曇十八章
 ├─ siddham-registry.css                  # 主題 token ＋ 兩頁樣式
@@ -31,7 +31,7 @@ public/apps/siddham-registry/
 
 ```bash
 npm install && npm start        # → http://localhost:3000/apps/siddham-registry/
-npm run verify                  # 14 條契約檢查
+npm run verify                  # 15 條契約檢查
 node scripts/verify.js --selftest   # 逐條改壞，確認每條真的抓得到
 ```
 

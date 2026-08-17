@@ -16,7 +16,20 @@
 (function (window, document) {
   'use strict';
 
-  var L = null, ix = null, modal = null, state = { syl: null, glyph: null };
+  var L = null, ix = null, state = { syl: null, glyph: null };
+
+  /**
+   * ⚠️ 每次都跟 Materialize 要「當下那一個」實例，不要把 init() 的回傳值存起來。
+   *    Materialize 的 init 對同一個元素跑第二次會先 destroy 舊實例（連同它的 click／
+   *    keydown handler）再建一個新的，而握著舊實例的人**不會收到任何通知**。
+   *    後果是：舊實例照樣開得起卡（open 只是加 class ＋ 貼 overlay），新實例的
+   *    isOpen 卻一直是 false ⇒ close() 第一行就早退 ⇒ 這張卡關不掉，而畫面完全正常。
+   *    這支模組是兩頁共用的，管不到呼叫端會不會再 init 一次，所以在自己這邊讓它不成立。
+   */
+  function modalInst() {
+    var el = document.getElementById('glyph-detail');
+    return window.M.Modal.getInstance(el) || window.M.Modal.init(el, { endingTop: '6%' });
+  }
 
   function t(key, params) {
     return window.I18n ? window.I18n.t(key, params) : key;
@@ -158,7 +171,7 @@
     var host = document.createElement('div');
     host.innerHTML = html();
     document.body.appendChild(host.firstChild);
-    modal = window.M.Modal.init(document.getElementById('glyph-detail'), { endingTop: '6%' });
+    window.M.Modal.init(document.getElementById('glyph-detail'), { endingTop: '6%' });
 
     // 複製：讀畫面上當下那個值（家族 v1.34 的判準）
     document.getElementById('glyph-detail').addEventListener('click', function (e) {
@@ -188,10 +201,10 @@
 
   window.GlyphDetail = {
     install: install,
-    openSyllable: function (i) { state.syl = i; state.glyph = null; render(); modal.open(); },
+    openSyllable: function (i) { state.syl = i; state.glyph = null; render(); modalInst().open(); },
     openGlyph: function (i) {
       var g = L.glyph(ix, i);
-      state.glyph = i; state.syl = g ? g.syl : null; render(); modal.open();
+      state.glyph = i; state.syl = g ? g.syl : null; render(); modalInst().open();
     },
     refresh: function () { if (state.syl !== null || state.glyph !== null) render(); },
   };

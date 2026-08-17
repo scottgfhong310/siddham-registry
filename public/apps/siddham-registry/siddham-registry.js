@@ -141,7 +141,12 @@
     });
 
     // 側鍵
-    window.M.Modal.init(document.querySelectorAll('.modal'), { endingTop: '6%' });
+    // ⚠️ 只 init 這一頁自己的那一個 modal，**不要** M.Modal.init(document.querySelectorAll('.modal'))：
+    //    明細卡是 GlyphDetail 自己 init 的，掃全部等於把它的實例 destroy 掉再換一個新的，
+    //    而新的那個 isOpen 一直是 false（開卡的是被丟掉的那一個）⇒
+    //    「關閉」／點遮罩／ESC 全部在 close() 的第一行早退，**那張卡關不掉**。
+    //    畫面上完全正常——卡開得起來、長得對，只有關不掉，所以只能靠檢查釘住（verify 第 ⑮ 條）。
+    window.M.Modal.init($('font-modal'), { endingTop: '6%' });
     $('setting-fonts').addEventListener('click', function () {
       renderFonts();
       window.M.Modal.getInstance($('font-modal')).open();
