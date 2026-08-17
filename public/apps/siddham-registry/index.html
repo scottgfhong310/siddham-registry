@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>悉曇文字對照</title>
+
+  <!-- 防主題閃爍：render 前先讀 localStorage 設好 data-theme 與 dark-mode/light-mode class（§5.1 坑） -->
+  <script>
+    try {
+      var t = localStorage.getItem('siddham-registry-theme') || 'dark';
+      var r = document.documentElement;
+      r.dataset.theme = t;
+      r.classList.toggle('dark-mode', t === 'dark');
+      r.classList.toggle('light-mode', t === 'light');
+    } catch (e) { }
+  </script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="./materialize-dark.css" />
+  <link rel="stylesheet" href="./siddham-registry.css" />
+  <link rel="stylesheet" href="./side-tool.css" />
+  <link rel="stylesheet" href="./filter-clear.css" />
+</head>
+
+<body data-i18n-doctitle="title.page">
+
+  <div class="head">
+    <div>
+      <h1 data-i18n="app.title">悉曇文字對照</h1>
+      <div class="sub" data-i18n="app.sub">CBETA 造字 ↔ Unicode Siddham</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="input-field">
+      <input id="search" type="text" autocomplete="off" spellcheck="false"
+             data-i18n-placeholder="search.placeholder" placeholder="記法 / 羅馬 / 悉曇 / 造字 / Big5…"
+             data-filter-clear />
+    </div>
+    <span id="count" class="count"></span>
+  </div>
+
+  <!-- 字型未安裝時的告示。⚠️ 這一段不是裝飾：CBETA 字型沒有散布授權、不隨本 repo 出去
+       （治理 §9.2），沒裝就是一片缺字方塊，要講出來為什麼，不要留白。 -->
+  <div class="font-notice">
+    <span data-i18n-html="font.notice">尚未偵測到 CBETA 悉曇字型…</span>
+  </div>
+
+  <main>
+    <div class="chips-row">
+      <button class="chip-btn active" data-mode="wall" data-i18n="mode.wall">音節牆</button>
+      <button class="chip-btn" data-mode="reverse" data-i18n="mode.reverse">反查</button>
+    </div>
+
+    <div id="view-wall" class="wall"></div>
+
+    <div id="view-reverse" class="rev-wrap" style="display:none">
+      <div class="rev-in">
+        <textarea id="rev-input" spellcheck="false"
+                  data-i18n-placeholder="reverse.placeholder" placeholder="貼上用 CBETA 造字寫成的文字…"></textarea>
+        <div class="rev-hint" data-i18n-html="reverse.hint"></div>
+      </div>
+      <div id="rev-out" class="rev-out"></div>
+    </div>
+  </main>
+
+  <div class="side-tools">
+    <a id="setting-chapters" class="side-tool" href="./chapters.html"
+       data-i18n-title="tool.chapters" title="悉曇十八章">
+      <i class="material-icons">grid_on</i>
+    </a>
+    <div id="setting-fonts" class="side-tool" data-i18n-title="tool.fonts" title="字型說明">
+      <i class="material-icons">font_download</i>
+    </div>
+    <div id="setting-mode" class="side-tool" data-i18n-title="tool.mode" title="切換 light / dark">
+      <i class="material-icons">dark_mode</i>
+    </div>
+    <div id="setting-lang" class="side-tool" data-i18n-title="tool.lang" title="Language">
+      <i class="material-icons">translate</i>
+    </div>
+  </div>
+
+  <!-- 字型說明 Modal -->
+  <div id="font-modal" class="modal detail-modal">
+    <div class="modal-content">
+      <h5 data-i18n="font.title">字型</h5>
+      <div id="font-list"></div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat" data-i18n="detail.close">關閉</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="./i18n.js"></script>
+  <script src="./locales/zh-Hant.js"></script>
+  <script src="./locales/en.js"></script>
+  <script src="./locales/ja.js"></script>
+  <script src="./data/siddham-meta.js"></script>
+  <script src="./data/siddham-faces.js"></script>
+  <script src="./data/siddham-syllables.js"></script>
+  <script src="./data/siddham-glyphs.js"></script>
+  <script src="./data/siddham-composition.js"></script>
+  <script src="./siddham-registry-lib.js"></script>
+  <script src="./font-probe.js"></script>
+  <script src="./glyph-detail.js"></script>
+  <script src="./filter-clear.js"></script>
+  <script src="./side-tool.js"></script>
+  <script src="./siddham-registry.js"></script>
+</body>
+
+</html>

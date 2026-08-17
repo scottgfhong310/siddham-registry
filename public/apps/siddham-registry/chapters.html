@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>悉曇十八章</title>
+
+  <script>
+    try {
+      var t = localStorage.getItem('siddham-registry-theme') || 'dark';
+      var r = document.documentElement;
+      r.dataset.theme = t;
+      r.classList.toggle('dark-mode', t === 'dark');
+      r.classList.toggle('light-mode', t === 'light');
+    } catch (e) { }
+  </script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="./materialize-dark.css" />
+  <link rel="stylesheet" href="./siddham-registry.css" />
+  <link rel="stylesheet" href="./side-tool.css" />
+</head>
+
+<body data-i18n-doctitle="chapters.title">
+
+  <div class="head">
+    <div>
+      <h1 data-i18n="chapters.title">悉曇十八章</h1>
+      <div class="sub" data-i18n="chapters.sub">一章 12 欄；點任一格看它的組字與其他寫法</div>
+    </div>
+    <div class="spacer"></div>
+    <span id="count" class="count"></span>
+  </div>
+
+  <div class="font-notice">
+    <span data-i18n-html="font.notice">尚未偵測到 CBETA 悉曇字型…</span>
+  </div>
+
+  <main>
+    <div class="chips-row" id="chap-chips"></div>
+    <h2 class="chap-head" id="chap-title"></h2>
+    <div class="chap-sub" id="chap-sub"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <div class="side-tools">
+    <a id="setting-back" class="side-tool" href="./index.html"
+       data-i18n-title="chapters.back" title="回字形對照">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <div id="setting-mode" class="side-tool" data-i18n-title="tool.mode" title="切換 light / dark">
+      <i class="material-icons">dark_mode</i>
+    </div>
+    <div id="setting-lang" class="side-tool" data-i18n-title="tool.lang" title="Language">
+      <i class="material-icons">translate</i>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="./i18n.js"></script>
+  <script src="./locales/zh-Hant.js"></script>
+  <script src="./locales/en.js"></script>
+  <script src="./locales/ja.js"></script>
+  <script src="./data/siddham-meta.js"></script>
+  <script src="./data/siddham-faces.js"></script>
+  <script src="./data/siddham-syllables.js"></script>
+  <script src="./data/siddham-glyphs.js"></script>
+  <script src="./data/siddham-composition.js"></script>
+  <script src="./data/siddham-chapters.js"></script>
+  <script src="./siddham-registry-lib.js"></script>
+  <script src="./font-probe.js"></script>
+  <script src="./glyph-detail.js"></script>
+  <script src="./side-tool.js"></script>
+  <script src="./chapters.js"></script>
+</body>
+
+</html>

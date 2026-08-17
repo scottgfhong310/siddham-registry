@@ -1,0 +1,15 @@
+{
+  "name": "siddham-registry",
+  "version": "1.0.0",
+  "description": "CBETA 造字 ↔ Unicode Siddham 對照與悉曇十八章（唯讀參考工具）",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "verify": "node scripts/verify.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}

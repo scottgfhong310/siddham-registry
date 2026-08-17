@@ -1,0 +1,185 @@
+/* siddham-registry — 主題 token ＋ 本頁樣式（家族 DESIGN_GUIDELINES §5.1） */
+
+/* ── 字型 ───────────────────────────────────────────────────────────────
+   ⚠️ 兩支字型的來路完全不同，這裡的差別就是治理 §9.2 的結論：
+
+   · Noto Sans Siddham — SIL OFL 1.1，**隨本 repo 散布**（fonts/ 內，附 OFL.txt）
+   · Siddam（CBETA 造字）— **沒有散布授權，故不隨 repo 散布**。
+     只用 local()，讀使用者自己安裝的那一份；沒裝就是缺字方塊，
+     由控制器偵測並顯示說明與取得連結（**不要留白**）。
+     ⚠️ 不可以加 url(...) 退路——那等於把字型放進 repo，正是被禁止的那件事。 */
+@font-face {
+  font-family: 'NotoSansSiddham';
+  src: url('fonts/NotoSansSiddham-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'CbetaSiddam';
+  src: local('Siddam');   /* 僅本機；刻意沒有 url() 退路 */
+  font-display: swap;
+}
+
+:root {
+  --bg: #fafafa; --surface: #fff; --text: #212121; --muted: #6b6b6b;
+  --border: #e0e0e0; --accent: #00897b; --accent-soft: #e0f2f1;
+  --overlay: rgba(255,255,255,.72); --warn-bg: #fff8e1; --warn-fg: #8d6e00;
+  --head-h: 64px;
+}
+[data-theme='dark'] {
+  --bg: #121212; --surface: #1e1e1e; --text: #e8e8e8; --muted: #9e9e9e;
+  --border: #333; --accent: #80cbc4; --accent-soft: #12332f;
+  --overlay: rgba(18,18,18,.72); --warn-bg: #2e2a17; --warn-fg: #ffd54f;
+}
+
+/* ⚠️ 羅馬轉寫用的字型堆疊，與介面字型分開——這不是美觀問題。
+   ISO 15919 用**組合附加符號**寫鼻化與成音節流音，資料裡實測四種：
+     U+0310 candrabindu（28 個音節）／U+0325 環下（151）／U+0304 macron（36）／U+0332 底線（25）
+   而 `-apple-system`／泛型 `serif` **畫不出 U+0310**，`am̐` 會變成 `am` ＋ 豆腐方塊。
+   下面這幾支實測畫得出來（同一台機器上並排比對過）：Charis SIL／Gentium Plus／
+   Times New Roman／Arial Unicode MS／Helvetica。
+   ⚠️ 一台機器上一支都沒有時仍會是豆腐——那影響 28/6,898 個音節，
+   而**記法（a~m）永遠顯示在旁邊**，識別不會因此遺失。 */
+:root {
+  --latin: 'Charis SIL', 'Gentium Plus', 'Doulos SIL', 'Times New Roman',
+           'Arial Unicode MS', Helvetica, serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--text); margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+}
+a { color: var(--accent); }
+
+/* ── 頁首 ─────────────────────────────────────────────────────────── */
+.head {
+  position: sticky; top: 0; z-index: 10; height: var(--head-h);
+  display: flex; align-items: center; gap: 16px; padding: 0 20px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+}
+.head h1 { font-size: 1.05rem; margin: 0; font-weight: 600; white-space: nowrap; }
+.head .sub { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+.head .spacer { flex: 1; }
+.head .input-field { margin: 0; width: 260px; }
+.head .input-field input { margin: 0; height: 38px; }
+
+/* ── 字型未安裝的告示（不要留白，§11.1）───────────────────────────── */
+.font-notice {
+  display: none; margin: 12px 20px 0; padding: 10px 14px; border-radius: 8px;
+  background: var(--warn-bg); color: var(--warn-fg); font-size: .84rem; line-height: 1.6;
+}
+body.no-cbeta-font .font-notice { display: block; }
+.font-notice a { color: inherit; text-decoration: underline; }
+
+/* ── 內容 ─────────────────────────────────────────────────────────── */
+main { padding: 16px 20px 64px; }
+.chips-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+.chip-btn {
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 999px; padding: 5px 14px; font-size: .82rem; cursor: pointer;
+}
+.chip-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.count { color: var(--muted); font-size: .8rem; }
+
+/* 音節牆 */
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+.syl-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 10px 10px; text-align: center; cursor: pointer;
+}
+.syl-card:hover { border-color: var(--accent); }
+.syl-sid {
+  font-family: 'NotoSansSiddham', serif; font-size: 2.1rem; line-height: 1.35;
+  display: block; min-height: 2.6rem;
+}
+.syl-not { font-size: .84rem; font-family: ui-monospace, Menlo, monospace; }
+.syl-lat { color: var(--muted); font-size: .78rem; font-family: var(--latin); }
+.syl-n { color: var(--accent); font-size: .72rem; margin-top: 4px; }
+
+/* 反查 */
+.rev-wrap { display: grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap: 16px; }
+.rev-in textarea {
+  width: 100%; min-height: 180px; padding: 10px; border-radius: 8px; resize: vertical;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  font-family: 'CbetaSiddam', serif; font-size: 1.6rem; line-height: 1.7;
+}
+.rev-hint { color: var(--muted); font-size: .78rem; margin-top: 6px; line-height: 1.6; }
+.rev-out { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+.rev-cell {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 8px; text-align: center; min-width: 62px; cursor: pointer;
+}
+.rev-cell.miss { border-style: dashed; opacity: .7; cursor: default; }
+.rev-cell.nosyl { border-color: var(--warn-fg); cursor: default; }
+.rev-src { font-family: 'CbetaSiddam', serif; font-size: 1.5rem; display: block; }
+.rev-sid { font-family: 'NotoSansSiddham', serif; font-size: 1.2rem; display: block; }
+.rev-lat { color: var(--muted); font-size: .72rem; font-family: var(--latin); }
+.rev-note { color: var(--warn-fg); font-size: .64rem; display: block; line-height: 1.3; }
+
+/* 十八章 */
+.chap-head { margin: 0 0 4px; font-size: 1rem; }
+.chap-sub { color: var(--muted); font-size: .8rem; margin-bottom: 12px; }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; }
+.cell {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 4px 6px; text-align: center; cursor: pointer; overflow: hidden;
+}
+.cell:hover { border-color: var(--accent); }
+.cell.empty { background: transparent; border-style: dashed; cursor: default; opacity: .4; }
+.cell-src { font-family: 'CbetaSiddam', serif; font-size: 1.7rem; display: block; line-height: 1.3; }
+.cell-sid { font-family: 'NotoSansSiddham', serif; font-size: 1rem; display: block; line-height: 1.4; }
+.cell-lat { color: var(--muted); font-size: .66rem; display: block; font-family: var(--latin); }
+.cell-comp {
+  font-family: 'CbetaSiddam', serif; font-size: .82rem; color: var(--muted);
+  display: block; margin-top: 3px; line-height: 1.3;
+}
+
+/* ── 明細卡（家族 §11.1 的骨架）───────────────────────────────────── */
+.detail-modal { max-width: 620px; border-radius: 14px; }
+.detail-modal .modal-content { padding: 0; }
+.detail-head {
+  min-height: 118px; padding: 14px 20px; background: var(--accent-soft);
+  border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 18px;
+}
+.detail-head span { color: inherit; }   /* 見 §11.1：materialize-dark 會蓋掉 span 色 */
+.d-sid { font-family: 'NotoSansSiddham', serif; font-size: 3rem; line-height: 1.2; }
+.d-meta { flex: 1; }
+.d-not { font-family: ui-monospace, Menlo, monospace; font-size: 1.1rem; font-weight: 600; }
+.d-lat { color: var(--muted); font-family: var(--latin); }
+.d-cp { color: var(--muted); font-size: .78rem; font-family: ui-monospace, Menlo, monospace; }
+.detail-body { padding: 14px 20px 6px; }
+.d-section { margin-bottom: 16px; }
+.d-section h6 { font-size: .8rem; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+.d-empty { color: var(--muted); font-size: .82rem; }
+.facts-table { width: 100%; font-size: .82rem; }
+.facts-table td { padding: 3px 0; }
+.facts-table .fk { color: var(--muted); width: 34%; }
+.writings { display: flex; flex-wrap: wrap; gap: 6px; }
+.writing {
+  border: 1px solid var(--border); border-radius: 8px; padding: 5px 7px;
+  text-align: center; min-width: 56px; background: var(--surface);
+}
+.writing b { font-family: 'CbetaSiddam', serif; font-size: 1.5rem; font-weight: 400; display: block; }
+.writing i { font-style: normal; color: var(--muted); font-size: .62rem; display: block; line-height: 1.3; }
+.comp-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.comp-part {
+  font-family: 'CbetaSiddam', serif; font-size: 1.6rem;
+  border: 1px solid var(--border); border-radius: 8px; padding: 2px 8px; background: var(--surface);
+}
+.comp-part.ph { font-family: inherit; font-size: 1rem; color: var(--muted); border-style: dashed; }
+.comp-op { color: var(--muted); }
+.copy-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 8px; padding: 5px 10px; font-size: .78rem;
+}
+.copy-btn .material-icons { font-size: 16px; }
+.copy-btn.copied { border-color: #2e9e28; color: #2e9e28; }
+
+@media (max-width: 900px) {
+  .rev-wrap { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .head .input-field { width: 160px; }
+}
+@media print { .side-tools, .head, .chips-row { display: none !important; } }

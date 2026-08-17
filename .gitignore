@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+Thumbs.db
+
+# ⚠️ CBETA 悉曇字型（Siddam.ttf／.otf）沒有再散布的授權，**永不進本 repo**。
+# 前端只以 @font-face src: local('Siddam') 讀使用者本機安裝的版本。
+# 判定依據見 DESIGN.md 與 db_siddham 治理文件 §9.2。
+# 這幾行是防手滑的第二道；第一道是 scripts/verify.js 的授權檢查。
+Siddam.ttf
+Siddam.otf
+Siddham.ttf
+Mojikm13.TTF
+public/apps/siddham-registry/*.ttf
+public/apps/siddham-registry/*.otf

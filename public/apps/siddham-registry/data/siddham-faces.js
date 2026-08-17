@@ -1,0 +1,51 @@
+// siddham-registry — face（書家／字體／符號群），由 db_siddham 匯出，勿手改
+
+// ⚠️ 欄序寫在產物裡，消費端依名字解包——否則欄序一改就靜默錯位
+window.SID_FACE_COLS = ["code","name","catalog","sort","sameAs"];
+
+// name 是資料（書家／傳本名），永不翻譯。catalog／sameAs 可為 null＝來源本來就沒有
+window.SID_FACES = [
+["39","母音",null,100,null],
+["43","異體字","variant",150,null],
+["1","子音",null,200,null],
+["42","子音（擴充）",null,210,null],
+["17","體文","conjunct-mark",300,null],
+["44","體文（2）","conjunct-mark",310,null],
+["34","體文（擴充）","conjunct-mark",320,null],
+["19","子音接續符號（上部）","conjunct-mark",410,"18"],
+["20","子音接續符號（下部）","conjunct-mark",420,"18"],
+["23","符號","symbol",430,null],
+["35","子音接續符號（擴充）","conjunct-mark",430,null],
+["38","子音接續符號（擴充）","conjunct-mark",440,null],
+["18","子音接續符號","conjunct-mark",450,null],
+["24","筆畫順序","stroke-order",460,null],
+["41","Combination",null,500,null],
+["2","《梵字悉曇》田久保周譽","calligraphy",700,null],
+["3","兒玉義隆","calligraphy",700,null],
+["4","坂井榮信","calligraphy",700,null],
+["5","德山暉純","calligraphy",700,null],
+["6","德山暉純・字集","calligraphy",700,null],
+["7","弘法大師・空海","calligraphy",700,null],
+["8","《悉曇字記》釋智廣","calligraphy",700,null],
+["9","《法隆寺貝葉》","calligraphy",700,null],
+["14","蘭札・同文韻統","script",800,null],
+["15","蘭札・才旦夏茸","script",800,null],
+["16","瓦德體","typeface",800,null],
+["22","藏文（བོད་ཡིག་）","script",800,null],
+["28","蘭札・才旦夏茸","script",800,"15"],
+["10","字體（4）","typeface",850,null],
+["11","字體（8）","typeface",850,null],
+["12","字體（10）","typeface",850,null],
+["13","字體（15）","typeface",850,null],
+["21","群組（1）","group",900,null],
+["27","群組（2）","group",900,null],
+["29","群組（3）","group",900,null],
+["30","群組（4）","group",900,null],
+["31","群組（5）","group",900,null],
+["32","群組（6）","group",900,null],
+["33","群組（7）","group",900,null],
+["25","文章的記號","punctuation",1000,null],
+["26","咒輪","mantra-wheel",1000,null],
+["36","悉曇章",null,1000,null],
+["37","（待分群）",null,1100,null]
+];
