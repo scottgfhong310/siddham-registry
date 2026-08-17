@@ -98,8 +98,20 @@
         var status = f.redistributable === true
           ? t('font.bundled')
           : (installed && f.encoding ? t('font.local') : t('font.notInstalled'));
+        // ⚠️ 兩種版本說法不可混用：隨 app 提供的那支，登錄版本**就是**你拿到的那支；
+        //    走 local() 的則不然——CBETA 有兩個同名建置（v2.00／v1.062），
+        //    family 與 PostScript name 全是 Siddam，local() 依名字比對，網頁分不出來。
+        //    對它寫「版本 X」等於替使用者宣稱一件本頁查不到的事。
+        // name ID 5 依慣例以 "Version " 開頭，而三語標籤自己已經有那個詞了
+        // （不剝會印成「版本 Version 2.004」／"version Version 2.004"）。
+        // 只剝開頭，剩下的原樣顯示——版本字串後面可能還有建置資訊，那是事實不是雜訊。
+        var vs = f.version ? String(f.version).replace(/^version\s+/i, '') : '';
+        var ver = vs
+          ? t(f.redistributable === true ? 'font.version' : 'font.versionRegistered', { v: vs })
+          : '';
         return '<tr><td class="fk">' + esc(f.family) + '</td><td class="fv">'
-          + esc(status) + '｜' + esc(f.license || t('font.noLicense')) + '</td></tr>';
+          + esc(status) + '｜' + esc(f.license || t('font.noLicense'))
+          + (ver ? '<span class="f-ver">' + esc(ver) + '</span>' : '') + '</td></tr>';
       }).join('') + '</table>'
       + '<p class="d-empty">' + t('font.why') + '</p>';
   }

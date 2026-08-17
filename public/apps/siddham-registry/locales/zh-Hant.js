@@ -43,6 +43,11 @@ I18n.register('zh-Hant', {
   'font.local': '讀本機已安裝的版本',
   'font.notInstalled': '本機未安裝',
   'font.noLicense': '未宣告授權',
+  'font.version': '版本 {v}',
+  // ⚠️ 這一句刻意不寫成「版本 {v}」：{v} 是**本 app 登錄的**版本，不是你機器上那一支。
+  //    CBETA 有兩個同名建置（v2.00 與 v1.062），family／PostScript name 全是 Siddam，
+  //    local() 依名字比對 ⇒ 網頁分不出來。寫成「版本 X」等於替使用者宣稱一件查不到的事。
+  'font.versionRegistered': '登錄版本 {v}（同名建置不只一個，本頁分不出你裝的是哪一支）',
   'font.why': '只有 SIL OFL 授權的字型隨本 app 散布。CBETA 造字字型未宣告授權條款，'
     + '故僅以 local() 讀取本機安裝的版本。',
 

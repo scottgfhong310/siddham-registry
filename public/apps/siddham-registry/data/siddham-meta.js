@@ -7,4 +7,4 @@ window.SID_META = {"source":"Cbeta/CbetaSiddham.xlsx","sourceSha256":"f6e38e9ee7
 // 字型登錄。⚠️ redistributable === false 的字型**不隨本 repo 散布**（治理 §9.2）——
 // 前端以 @font-face src: local(<family>) 讀使用者本機安裝的版本，
 // 偵測不到就顯示說明與取得連結，不要留白。
-window.SID_FONTS = [{"code":"noto-sans-siddham","family":"Noto Sans Siddham","version":"Version 2.004","license":"SIL OFL 1.1","redistributable":true,"encoding":null},{"code":"siddam-otf","family":"Siddam","version":"Version 1.062;June 21, 2023;FontCreator 14.0.0.2901 64-bit","license":null,"redistributable":false,"encoding":"cbeta"},{"code":"siddam-ttf","family":"Siddam","version":"Version 1.062;June 21, 2023;FontCreator 14.0.0.2901 64-bit","license":null,"redistributable":false,"encoding":"cbeta"}];
+window.SID_FONTS = [{"code":"noto-sans-siddham","family":"Noto Sans Siddham","version":"Version 2.004","license":"SIL OFL 1.1","redistributable":true,"encoding":null},{"code":"siddam-ttf","family":"Siddam","version":"Version 2.00","license":null,"redistributable":false,"encoding":"cbeta"}];

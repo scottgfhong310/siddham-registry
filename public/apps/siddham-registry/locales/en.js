@@ -45,6 +45,10 @@ I18n.register('en', {
   'font.local': 'read from your installed copy',
   'font.notInstalled': 'not installed locally',
   'font.noLicense': 'no licence declared',
+  'font.version': 'version {v}',
+  // ⚠️ See zh-Hant: {v} is the version this app has on record, not the one you installed.
+  'font.versionRegistered': 'version {v} on record (more than one build shares this name — '
+    + 'this page cannot tell which one you have)',
   'font.why': 'Only fonts under the SIL OFL are shipped with this app. The CBETA private-use font '
     + 'declares no licence terms, so it is only read via local().',
 

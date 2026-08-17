@@ -142,6 +142,8 @@ main { padding: 16px 20px 64px; }
    ⇒ 標題與表格四邊全部貼著卡緣（實測內容左緣 ＝ 卡片左緣，0px）。
    兩張卡共用 .detail-modal，所以這裡逐字沿用 .detail-body 的內距，內容才落在同一條線上。 */
 #font-modal .modal-content { padding: 14px 20px 6px; }
+/* 版本另起一行、比狀態弱一級——它是註腳，主角是「這支字型從哪裡來、授權是什麼」 */
+.f-ver { display: block; color: var(--muted); font-size: .74rem; margin-top: 2px; }
 /* 上方留白已由 padding-top 給了，h5 再帶 15px margin 會疊成兩倍 */
 #font-modal .modal-content h5 { margin: 0 0 10px; }
 .detail-head {
