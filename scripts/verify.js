@@ -69,8 +69,13 @@ function valueOf(src, key) {
 }
 
 // ── 檢查 ────────────────────────────────────────────────────────────────
-const CHECKS = [
-  ['① app 目錄下沒有任何字型檔，除了 fonts/ 內 OFL 的那一支', () => {
+const CHECKS = [];
+/** ⚠️ 用 check() 註冊而不是陣列字面——家族的 tools/test-readme-counts.js
+ *  以 /^\s*check\(\s*'/ 數條數，寫成陣列它讀不到（會回報「讀不到條數」）。
+ *  這不是風格問題：README 寫的條數會因此沒有東西在對。 */
+function check(name, fn) { CHECKS.push([name, fn]); }
+
+check('① app 目錄下沒有任何字型檔，除了 fonts/ 內 OFL 的那一支', () => {
     const bad = [];
     const walk = (dir, rel) => {
       for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -84,55 +89,55 @@ const CHECKS = [
     };
     walk(APP, '');
     return bad.length ? `不該存在的字型檔：${bad.join(', ')}` : null;
-  }],
+  });
 
-  ['② fonts/ 內附有 OFL.txt', () =>
-    fs.existsSync(path.join(APP, 'fonts/OFL.txt')) ? null : '缺 fonts/OFL.txt（bundled 字型必須附授權）'],
+check('② fonts/ 內附有 OFL.txt', () =>
+    fs.existsSync(path.join(APP, 'fonts/OFL.txt')) ? null : '缺 fonts/OFL.txt（bundled 字型必須附授權）');
 
-  ['③ CbetaSiddam 的 @font-face 只有 local()、沒有 url()', () => {
+check('③ CbetaSiddam 的 @font-face 只有 local()、沒有 url()', () => {
     const css = stripComments(SRC.css);
     const m = css.match(/@font-face\s*\{[^}]*CbetaSiddam[^}]*\}/);
     if (!m) return '找不到 CbetaSiddam 的 @font-face';
     if (!/src:\s*local\(/.test(m[0])) return '沒有用 local()';
     if (/url\(/.test(m[0])) return '出現 url()——那等於把沒有授權的字型放進 repo';
     return null;
-  }],
+  });
 
-  ['④ 字型偵測量像素不量寬度，且自帶對照組', () => {
+check('④ 字型偵測量像素不量寬度，且自帶對照組', () => {
     const p = stripComments(SRC.probe);
     if (/measureText/.test(p)) return 'font-probe 用了 measureText——載體字元是 CJK，任何字型都恰好 1em，量不出來';
     if (!/getImageData/.test(p)) return '沒有量像素';
     if (!/__no_such_font__/.test(p)) return '沒有對照組（不存在的字型必須與純後備相同）';
     if (!/return null/.test(p)) return '對照組失敗時沒有回 null（不確定就不要給答案）';
     return null;
-  }],
+  });
 
-  ['⑤ 兩個控制器都不自帶字型偵測（只有 font-probe 一份實作）', () => {
+check('⑤ 兩個控制器都不自帶字型偵測（只有 font-probe 一份實作）', () => {
     for (const [n, s] of [['siddham-registry.js', SRC.ctrl], ['chapters.js', SRC.chap]]) {
       if (/measureText|getImageData/.test(stripComments(s))) return `${n} 自己在偵測字型——應改用 FontProbe`;
       if (!/FontProbe\.applyBodyClass/.test(s)) return `${n} 沒有呼叫 FontProbe.applyBodyClass`;
     }
     return null;
-  }],
+  });
 
-  ['⑥ 羅馬轉寫用專屬字型堆疊（ISO 15919 的組合附加符號）', () => {
+check('⑥ 羅馬轉寫用專屬字型堆疊（ISO 15919 的組合附加符號）', () => {
     const css = stripComments(SRC.css);
     if (!/--latin:/.test(css)) return '沒有定義 --latin';
     const uses = (css.match(/font-family:\s*var\(--latin\)/g) || []).length;
     if (uses !== 4) return `套用處數為 ${uses}，應為 4（.syl-lat／.rev-lat／.d-lat／.cell-lat）`;
     return null;
-  }],
+  });
 
-  ['⑦ 章名只放行 <sub>，不是全跳脫也不是全信任', () => {
+check('⑦ 章名只放行 <sub>，不是全跳脫也不是全信任', () => {
     const s = stripComments(SRC.chap);
     if (!/function chapterName/.test(s)) return '沒有 chapterName()';
     if (!/&lt;sub&gt;/.test(s)) return '沒有把跳脫後的 &lt;sub&gt; 換回標籤';
     if (!/esc\(raw\)/.test(s)) return '沒有先整段跳脫';
     if (!/chapterName\(g\.chapter\.name\)/.test(s)) return 'chapterName() 沒有被用在章名上';
     return null;
-  }],
+  });
 
-  ['⑧ 組字的四種狀態都被消費端分開處理', () => {
+check('⑧ 組字的四種狀態都被消費端分開處理', () => {
     const lib = stripComments(SRC.lib);
     for (const st of ["'none'", "'atomic'", "'composed'"]) {
       if (!lib.includes(st)) return `lib 沒有 ${st} 狀態`;
@@ -142,17 +147,17 @@ const CHECKS = [
     if (!/state === 'atomic'/.test(d)) return '明細卡沒有把「基本字」與「沒有登錄」講成兩句話';
     if (!/compAtomic/.test(d) || !/compNone/.test(d)) return '缺 compAtomic／compNone 文案';
     return null;
-  }],
+  });
 
-  ['⑨ 反查的三種結果各有一種樣子，不併成「找不到」', () => {
+check('⑨ 反查的三種結果各有一種樣子，不併成「找不到」', () => {
     const s = stripComments(SRC.ctrl);
     if (!/reverse\.unknown/.test(s)) return '缺「不在登錄裡」';
     if (!/reverse\.noSyllable/.test(s)) return '缺「本來就沒有音」';
     if (!/rev-cell miss/.test(s) || !/rev-cell nosyl/.test(s)) return '兩種缺席沒有分開的 class';
     return null;
-  }],
+  });
 
-  ['⑩ 側鍵 markup 都有對應的 handler（或是真的 <a>）', () => {
+check('⑩ 側鍵 markup 都有對應的 handler（或是真的 <a>）', () => {
     const ids = [...SRC.index.matchAll(/id="(setting-[a-z-]+)"/g)].map((m) => m[1])
       .concat([...SRC.chapters.matchAll(/id="(setting-[a-z-]+)"/g)].map((m) => m[1]));
     const js = SRC.ctrl + SRC.chap;
@@ -163,17 +168,17 @@ const CHECKS = [
       if (!js.includes(`$('${id}')`)) bad.push(id);
     }
     return bad.length ? `這些側鍵沒有 handler 也不是連結：${bad.join(', ')}` : null;
-  }],
+  });
 
-  ['⑪ 三語 key 集合完全相同', () => {
+check('⑪ 三語 key 集合完全相同', () => {
     const z = keysOf(SRC.zh), e = keysOf(SRC.en), j = keysOf(SRC.ja);
     const miss = (a, b, an, bn) => [...a].filter((k) => !b.has(k)).map((k) => `${bn} 缺 ${k}`);
     const bad = [...miss(z, e, 'zh', 'en'), ...miss(z, j, 'zh', 'ja'),
                  ...miss(e, z, 'en', 'zh'), ...miss(j, z, 'ja', 'zh')];
     return bad.length ? bad.slice(0, 6).join('；') : null;
-  }],
+  });
 
-  ['⑫ 共用文案逐字等於 DESIGN_GUIDELINES §6 的〔正統〕', () => {
+check('⑫ 共用文案逐字等於 DESIGN_GUIDELINES §6 的〔正統〕', () => {
     const bad = [];
     for (const [key, [zh, en, ja]] of Object.entries(CANON)) {
       const got = [valueOf(SRC.zh, key), valueOf(SRC.en, key), valueOf(SRC.ja, key)];
@@ -182,9 +187,9 @@ const CHECKS = [
       });
     }
     return bad.length ? bad.slice(0, 4).join('；') : null;
-  }],
+  });
 
-  ['⑬ 資料產物齊備且宣告了欄序', () => {
+check('⑬ 資料產物齊備且宣告了欄序', () => {
     const need = ['siddham-meta.js', 'siddham-faces.js', 'siddham-syllables.js',
                   'siddham-glyphs.js', 'siddham-composition.js', 'siddham-chapters.js'];
     const miss = need.filter((f) => !fs.existsSync(path.join(APP, 'data', f)));
@@ -196,9 +201,9 @@ const CHECKS = [
     if (!/window\.SID_GLYPH_COLS\s*=/.test(g)) return 'siddham-glyphs.js 沒有宣告欄序';
     if (!/SiddhamLib.*unpack|unpack\(/.test(SRC.lib)) return 'lib 沒有依欄名解包';
     return null;
-  }],
+});
 
-  ['⑭ 原始碼不含 NUL 位元組', () => {
+check('⑭ 原始碼不含 NUL 位元組', () => {
     const bad = [];
     const walk = (dir) => {
       for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -210,8 +215,8 @@ const CHECKS = [
     };
     walk(APP);
     return bad.length ? `含 NUL：${bad.join(', ')}` : null;
-  }],
-];
+  });
+
 
 // ── selftest：逐條改壞，確認每條真的抓得到 ──────────────────────────────
 const SELFTESTS = [
