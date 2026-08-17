@@ -1,7 +1,7 @@
 {
   "name": "siddham-registry",
   "version": "1.0.0",
-  "description": "CBETA 造字 ↔ Unicode Siddham 對照與悉曇十八章（唯讀參考工具）",
+  "description": "CBETA 造字的書寫與組字，以 Unicode Siddham 相連；含悉曇十八章（唯讀參考工具）",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

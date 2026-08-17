@@ -11,9 +11,9 @@ I18n.register('ja', {
   'toast.copied': 'コピーしました',
 
   // ── 本アプリ ────────────────────────────────────────────────────
-  'title.page': '悉曇文字対照',
-  'app.title': '悉曇文字対照',
-  'app.sub': 'CBETA 外字 ↔ Unicode Siddham',
+  'title.page': '悉曇外字対照',
+  'app.title': '悉曇外字対照',
+  'app.sub': 'CBETA 外字の書写と組字を Unicode Siddham でつなぐ',
   'search.placeholder': '記法 / ローマ字 / 悉曇 / 外字 / Big5…',
 
   'mode.wall': '音節一覧',

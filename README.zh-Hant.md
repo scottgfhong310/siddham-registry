@@ -1,6 +1,9 @@
 # siddham-registry
 
-**CBETA 造字悉曇 ↔ Unicode Siddham** 的對照與反查，另有**〈悉曇十八章〉**。唯讀、零後端。
+**CBETA 造字**的**書寫與組字**，以 **Unicode Siddham** 相連（對照與反查），另有**〈悉曇十八章〉**。唯讀、零後端。
+
+> ⚠️ **造字是主體、Unicode Siddham 是連結**，不是對等的兩造。
+> 造字這一組字本身帶著悉曇文字的演進史（貝葉、空海、蘭札、瓦德體…），組字讓字義直覺化；Unicode Siddham 的價值是讓同一個音在不同體系之間指得到彼此。
 
 在 Unicode 收錄悉曇之前，悉曇梵字一律靠**自行造字**：台灣最早是嘉豐出版社以 Big5 編碼順序整理，
 後由 [CBETA](https://www.cbeta.org/) 承接、轉成 Unicode 字型並擴充；日本則有今昔文字鏡以

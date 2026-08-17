@@ -1,7 +1,13 @@
 # siddham-registry
 
-Cross-reference between **CBETA private-use Siddhaṁ glyphs** and **Unicode Siddham**,
-plus the **Eighteen Chapters of Siddhaṁ** (悉曇十八章). Read-only, zero backend.
+The **writings and composition** of the **CBETA private-use Siddhaṁ glyphs**, linked by
+**Unicode Siddham** (cross-reference and reverse lookup), plus the **Eighteen Chapters of
+Siddhaṁ** (悉曇十八章). Read-only, zero backend.
+
+> ⚠️ **The private-use glyphs are the subject; Unicode Siddham is the link** — not two equal
+> sides. That glyph set carries the evolution of Siddhaṁ writing (palm-leaf manuscripts,
+> Kūkai, Rañjanā, Wartu…), and its composition data makes the meaning legible; Unicode
+> Siddham's value is letting the same sound point across systems.
 
 Before Unicode had a Siddham block, Siddhaṁ was written with *private-use glyphs*: in Taiwan
 the earliest set came from 嘉豐出版社, ordered by Big5 code and later carried on and extended by

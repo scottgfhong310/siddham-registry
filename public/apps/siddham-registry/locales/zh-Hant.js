@@ -11,9 +11,11 @@ I18n.register('zh-Hant', {
   'toast.copied': '已複製',
 
   // ── 本 app ──────────────────────────────────────────────────────
-  'title.page': '悉曇文字對照',
-  'app.title': '悉曇文字對照',
-  'app.sub': 'CBETA 造字 ↔ Unicode Siddham',
+  'title.page': '悉曇造字對照',
+  'app.title': '悉曇造字對照',
+  // ⚠️ 刻意不是「A ↔ B」：那個雙向箭頭把兩邊講成對等的兩造，而治理 §3.0 說的是
+  //    **造字是主體、Unicode Siddham 是連結（樞紐）**。主詞也因此由「文字」換成「造字」。
+  'app.sub': 'CBETA 造字的書寫與組字，以 Unicode Siddham 相連',
   'search.placeholder': '記法 / 羅馬 / 悉曇 / 造字 / Big5…',
 
   'mode.wall': '音節牆',

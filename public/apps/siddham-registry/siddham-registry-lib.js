@@ -1,5 +1,5 @@
 /**
- * siddham-registry-lib — 悉曇文字對照的純核心
+ * siddham-registry-lib — 悉曇造字對照的純核心
  *
  * 用途：把 data/*.js 的匯出產物組成可查詢的索引，並提供反查／搜尋／組字拆解／
  *       十八章格子四組運算。**純邏輯、不碰 DOM、零依賴**（家族 DESIGN_GUIDELINES §4.2）。

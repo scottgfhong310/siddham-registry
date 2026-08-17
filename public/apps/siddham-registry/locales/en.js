@@ -14,7 +14,7 @@ I18n.register('en', {
   // ── this app ────────────────────────────────────────────────────
   'title.page': 'Siddhaṁ Registry',
   'app.title': 'Siddhaṁ Registry',
-  'app.sub': 'CBETA private-use glyphs ↔ Unicode Siddham',
+  'app.sub': 'CBETA private-use glyphs — writings and composition, linked by Unicode Siddham',
   'search.placeholder': 'notation / Latin / Siddhaṁ / glyph / Big5…',
 
   'mode.wall': 'Syllables',

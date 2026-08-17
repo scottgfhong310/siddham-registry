@@ -1,7 +1,7 @@
 /**
  * siddham-registry — 獨立執行的 Express 伺服器
  *
- * 唯讀參考工具：CBETA 造字 ↔ Unicode Siddham 對照，含悉曇十八章。
+ * 唯讀參考工具：CBETA 造字的書寫與組字，以 Unicode Siddham 相連；含悉曇十八章。
  * 9,066 個字形／6,898 個音節是靜態產物（public/apps/siddham-registry/data/*.js，
  * 由 db_siddham 匯出），不需上傳/編輯，故**後端無 API**——
  * 只負責靜態檔、根路徑轉址、JSON 404。

@@ -1,6 +1,7 @@
 # siddham-registry — Session context
 
-CBETA 造字 ↔ **Unicode Siddham** 的對照與反查，另有〈悉曇十八章〉。**零後端**：9,066 個字形／
+**CBETA 造字**的書寫與組字，以 **Unicode Siddham** 相連（對照與反查），另有〈悉曇十八章〉。
+⚠️ **造字是主體、Unicode Siddham 是連結**——不是對等的兩造（上游治理 §3.0）。**零後端**：9,066 個字形／
 6,898 個音節是靜態產物（`public/apps/siddham-registry/data/*.js`），由 `db_siddham` 匯出。
 
 本 app 屬於 **nodeapp WebApp 家族**；共同規範與流程在
