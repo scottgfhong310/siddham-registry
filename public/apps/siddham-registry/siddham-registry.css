@@ -137,6 +137,13 @@ main { padding: 16px 20px 64px; }
 /* ── 明細卡（家族 §11.1 的骨架）───────────────────────────────────── */
 .detail-modal { max-width: 620px; border-radius: 14px; }
 .detail-modal .modal-content { padding: 0; }
+/* ⚠️ 上面那條把 Materialize 的 24px 內距歸零，是因為明細卡的 .detail-head 要滿版著色；
+   它自己在 .detail-head／.detail-body 把內距補了回來，而**字型說明卡沒有那兩層**
+   ⇒ 標題與表格四邊全部貼著卡緣（實測內容左緣 ＝ 卡片左緣，0px）。
+   兩張卡共用 .detail-modal，所以這裡逐字沿用 .detail-body 的內距，內容才落在同一條線上。 */
+#font-modal .modal-content { padding: 14px 20px 6px; }
+/* 上方留白已由 padding-top 給了，h5 再帶 15px margin 會疊成兩倍 */
+#font-modal .modal-content h5 { margin: 0 0 10px; }
 .detail-head {
   min-height: 118px; padding: 14px 20px; background: var(--accent-soft);
   border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 18px;
