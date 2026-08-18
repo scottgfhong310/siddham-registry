@@ -2808,6 +2808,7 @@ window.SID_SYLLABLES = [
 ["phvau","𑖣𑖿𑖪𑖻","phvau"],
 ["phva;m","𑖣𑖿𑖪𑖽","phvaṁ"],
 ["phva.h","𑖣𑖿𑖪𑖾","phvaḥ"],
+["ph_u","𑖣𑗜","phu̲"],
 ["ph_u.h","𑖣𑗜𑖾","phu̲ḥ"],
 ["ba","𑖤","ba"],
 ["baa","𑖤𑖯","bā"],
