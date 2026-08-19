@@ -37,7 +37,7 @@
    而 `-apple-system`／泛型 `serif` **畫不出 U+0310**，`am̐` 會變成 `am` ＋ 豆腐方塊。
    下面這幾支實測畫得出來（同一台機器上並排比對過）：Charis SIL／Gentium Plus／
    Times New Roman／Arial Unicode MS／Helvetica。
-   ⚠️ 一台機器上一支都沒有時仍會是豆腐——那影響 28/6,899 個音節，
+   ⚠️ 一台機器上一支都沒有時仍會是豆腐——那影響 28/6,900 個音節，
    而**記法（a~m）永遠顯示在旁邊**，識別不會因此遺失。 */
 :root {
   --latin: 'Charis SIL', 'Gentium Plus', 'Doulos SIL', 'Times New Roman',

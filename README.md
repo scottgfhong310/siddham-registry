@@ -17,7 +17,7 @@ This app answers: *what Unicode Siddham does this private-use glyph correspond t
 
 ## What it does
 
-- **Syllable wall** — 6,899 syllables. Open one to see every way it is written:
+- **Syllable wall** — 6,900 syllables. Open one to see every way it is written:
   `ā` has **21 writings** across Kūkai, Zhiguang, the Hōryū-ji palm-leaf manuscript, Rañjana,
   Wartu and more. One Unicode Siddham string maps to as many as **37** glyphs.
 - **Reverse lookup** — paste text written with private-use glyphs, get Unicode Siddham back,
@@ -29,7 +29,7 @@ This app answers: *what Unicode Siddham does this private-use glyph correspond t
 
 ## Data
 
-9,066 glyphs · 6,899 syllables · 26,532 composition links · 6,442 chapter cells ·
+9,066 glyphs · 6,900 syllables · 26,532 composition links · 6,442 chapter cells ·
 43 faces · 18 chapters — exported from `db_siddham` as static JS. The products are
 **generated, not hand-edited**.
 
