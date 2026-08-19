@@ -5,9 +5,9 @@ window.SID_FACE_COLS = ["code","name","catalog","sort","sameAs"];
 
 // name 是資料（書家／傳本名），永不翻譯。catalog／sameAs 可為 null＝來源本來就沒有
 window.SID_FACES = [
-["39","母音",null,100,null],
+["39","母音","alphabet",100,null],
 ["43","異體字","variant",150,null],
-["1","子音",null,200,null],
+["1","子音","alphabet",200,null],
 ["42","子音（擴充）",null,210,null],
 ["17","體文","conjunct-mark",300,null],
 ["44","體文（2）","conjunct-mark",310,null],
