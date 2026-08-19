@@ -6902,6 +6902,6 @@ window.SID_SYLLABLES = [
 [null,"𑗌",null],
 [null,"𑗍",null],
 [null,"𑗒",null],
-["u","𑗜","u"],
+["_u","𑗜","u"],
 ["uu","𑗝","ū"]
 ];
