@@ -9,7 +9,7 @@
   var L = window.SiddhamLib;
   var ix = null;
   var state = { mode: 'wall', query: '', list: [] };
-  var WALL_LIMIT = 400;   // 一次貼 6,898 張卡會讓首屏很久；捲到底再追加
+  var WALL_LIMIT = 400;   // 一次貼 6,899 張卡會讓首屏很久；捲到底再追加
 
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) {

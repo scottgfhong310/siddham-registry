@@ -248,6 +248,84 @@ check('⑮ 明細卡的 Modal 實例不會被第二次 init 換掉（換掉了�
   });
 
 
+// ⚠️ 第 ⑯ 條是 2026-08-19 補的，而它補的是一個**已經漂了一天沒被發現**的洞：
+//    三份 README／`app.js`／`CLAUDE.md`／`DESIGN.md`／控制器與 CSS 的註解裡散著同一組
+//    「9,066 字形／6,899 音節／…」，而 **`db_siddham` 每登記一筆修正就可能動到它們**
+//    （`ph_u` 那筆讓音節 6,898 → 6,899，順帶讓 `U+0332` 的 25 → 26）。
+//    ⚠️ 家族的 `test-readme-counts.js` **照不到本 repo**（它只查五支色彩 registry 與
+//    `app-launcher`），所以在此之前**沒有任何東西在擋**。
+// ⚠️ 期望值一律**從出貨的產物算**，不從 DB 算：README 描述的是使用者拿到的東西，
+//    而 public repo 本來就不連 DB（`--check` 才是「產物 vs DB」那一層）。
+check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的實數', () => {
+    const dataDir = path.join(APP, 'data');
+    const w = {};
+    for (const f of ['siddham-faces.js', 'siddham-syllables.js', 'siddham-glyphs.js',
+                     'siddham-composition.js', 'siddham-chapters.js']) {
+      new Function('window', fs.readFileSync(path.join(dataDir, f), 'utf8')).call({}, w);
+    }
+    const si = Object.fromEntries(w.SID_SYL_COLS.map((c, i) => [c, i]));
+    const nComp = w.SID_COMPOSITION.reduce((n, x) => n + (Array.isArray(x) ? x.length : 0), 0);
+    const mark = (ch) => w.SID_SYLLABLES.filter((r) => (r[si.latin] || '').includes(ch)).length;
+    const real = {
+      glyphs: w.SID_GLYPHS.length, syllables: w.SID_SYLLABLES.length,
+      comp: nComp, cells: w.SID_CELLS.length,
+      faces: w.SID_FACES.length, chapters: w.SID_CHAPTERS.length,
+      u0310: mark('\u0310'), u0325: mark('\u0325'), u0304: mark('\u0304'), u0332: mark('\u0332'),
+    };
+    // ⚠️ 前提不成立就 FAIL，不可以當成「沒有數字要檢查」而通過（空轉的檢查比沒有檢查更糟）。
+    for (const [k, v] of Object.entries(real)) if (!Number.isInteger(v) || v <= 0) return `產物讀不出 ${k}`;
+
+    const grp = (n) => n.toLocaleString('en-US');   // 6899 -> "6,899"
+    // [檔案, 這個檔裡該出現的 (正則, 期望值) …]。⚠️ 比對的是**帶千分位的整數**，
+    //    不逐句解析語意——三種語言的語序不同，各寫一套解析壞掉時會安靜地比對到錯的位置。
+    const targets = [
+      ['README.md',        [[/([\d,]+) glyphs/, real.glyphs], [/([\d,]+) syllables/, real.syllables],
+                            [/([\d,]+) composition links/, real.comp], [/([\d,]+) chapter cells/, real.cells]]],
+      ['README.zh-Hant.md',[[/([\d,]+) 字形/, real.glyphs], [/([\d,]+) 音節/, real.syllables],
+                            [/([\d,]+) 個組字關聯/, real.comp], [/([\d,]+) 個章格/, real.cells]]],
+      ['README.ja.md',     [[/([\d,]+) 字形/, real.glyphs], [/([\d,]+) 音節/, real.syllables],
+                            [/([\d,]+) 組字リンク/, real.comp], [/([\d,]+) 章セル/, real.cells]]],
+      ['app.js',           [[/([\d,]+) 個字形/, real.glyphs], [/([\d,]+) 個音節/, real.syllables]]],
+      ['CLAUDE.md',        [[/([\d,]+) 個音節是靜態產物/, real.syllables]]],
+      ['DESIGN.md',        [[/`U\+0332` 底線 \*\*([\d,]+)\*\*/, real.u0332],
+                            [/影響 ([\d,]+)\/([\d,]+)/, real.u0310, real.syllables]]],
+    ];
+    const bad = [];
+    for (const [file, pairs] of targets) {
+      const p = path.join(ROOT, file);
+      if (!fs.existsSync(p)) { bad.push(`${file} 不存在`); continue; }
+      const src = fs.readFileSync(p, 'utf8');
+      for (const [re, ...want] of pairs) {
+        // ⚠️ 比對**每一個**出現處，不是 String.match 的第一個。
+        //    實際踩過：README.md 裡「syllables」出現兩次（介紹一次、統計行一次），
+        //    只比第一個的話，統計行那個數字**沒有任何東西在看守**——而它正是最會漂的那個。
+        const all = [...src.matchAll(new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g'))];
+        // ⚠️ 錨點讀不到要**逐檔報**，不可以因為別的檔過了就算數。
+        if (!all.length) { bad.push(`${file}：找不到錨點 ${re}`); continue; }
+        all.forEach((m) => want.forEach((v, i) => {
+          if (m[i + 1] !== grp(v)) bad.push(`${file}：${m[0]} 應為 ${grp(v)}`);
+        }));
+      }
+    }
+    // 控制器與 CSS 的註解裡也各有一份
+    const cssRe = [[/U\+0332 底線（([\d,]+)）/, real.u0332], [/影響 ([\d,]+)\/([\d,]+) 個音節/, real.u0310, real.syllables]];
+    for (const [re, ...want] of cssRe) {
+      const all = [...SRC.css.matchAll(new RegExp(re.source, 'g'))];
+      if (!all.length) { bad.push(`css：找不到錨點 ${re}`); continue; }
+      all.forEach((m) => want.forEach((v, i) => {
+        if (m[i + 1] !== grp(v)) bad.push(`css：${m[0]} 應為 ${grp(v)}`);
+      }));
+    }
+    // ⚠️ 這一條刻意比對**未去註解**的原始碼——本條要驗的東西就住在註解裡。
+    //    （其餘檢查用 stripComments 是為了不被自己的說明滿足；方向相反，故不共用。）
+    const mj = SRC.ctrl.match(/一次貼 ([\d,]+) 張卡/);
+    if (!mj) bad.push('控制器：找不到 WALL_LIMIT 註解的錨點');
+    else if (mj[1] !== grp(real.syllables)) bad.push(`控制器：${mj[0]} 應為 ${grp(real.syllables)}`);
+
+    return bad.length ? bad.join('；') : null;
+  });
+
+
 // ── selftest：逐條改壞，確認每條真的抓得到 ──────────────────────────────
 const SELFTESTS = [
   [1, 'app 目錄放一支沒有授權的字型', () => {
@@ -304,7 +382,19 @@ const SELFTESTS = [
     'render(); modalInst().open(); },', 'render(); modal.open(); },')],
   [15, '明細卡不再問當下的實例', () => patch('glyph-detail.js',
     'return window.M.Modal.getInstance(el) || window.M.Modal.init(el',
-    'return window.M.Modal.init(el')],
+    'return window.M.Modal.init(el')],,
+  // ⚠️ patch() 只改 APP 底下的檔，而第 ⑯ 條有一半的目標在 repo 根（README／app.js／…）——
+  //    所以這兩個注入一個打 repo 根、一個打 APP 內的註解，各驗一半。
+  [16, 'README 的統計數字過期（repo 根）', () => {
+    const p = path.join(ROOT, 'README.md');
+    const before = fs.readFileSync(p, 'utf8');
+    const after = before.replace(/(9,066 glyphs · )([\d,]+)( syllables)/, '$1' + '1,234' + '$3');
+    if (after === before) throw new Error('注入打不中（README.md 的統計行）');
+    fs.writeFileSync(p, after);
+    return () => fs.writeFileSync(p, before);
+  }],
+  [16, '控制器註解的字數過期', () => patch('siddham-registry.js',
+    /一次貼 [\d,]+ 張卡/, '一次貼 1,234 張卡')]
 ];
 
 /** 改壞一個檔案，回傳還原函式。⚠️ 會先斷言注入真的改到東西——
@@ -364,7 +454,13 @@ function main() {
     try {
       restore = mutate();
       const fails = runChecks();
-      const hit = fails.some((f) => f[0].startsWith(`${'①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮'[idx - 1]}`));
+      // ⚠️ 這裡本來是一張**寫死的圈碼表**（'①…⑮'），加第 16 條時它靜默失效：
+      //    查出 undefined ⇒ startsWith('undefined') 恆 false ⇒ 注入永遠判定「沒抓到」，
+      //    **而訊息裡其實已經寫著實際紅的就是那一條**。改成用宣告順序對應，不再有要手動跟著改的表
+      //    （家族反覆記載：一條要靠人跟著改的檢查，遲早會被改成讓它閉嘴的那個值）。
+      const target = CHECKS[idx - 1];
+      if (!target) throw new Error(`selftest 指向第 ${idx} 條，但只有 ${CHECKS.length} 條檢查`);
+      const hit = fails.some((f) => f[0] === target[0]);
       console.log(`  ${hit ? '✓' : '✗'} #${i + 1} 第 ${idx} 條 — ${desc}`
         + (hit ? '' : `   ← 沒抓到！實際紅的：${fails.map((f) => f[0].slice(0, 3)).join(',') || '（全綠）'}`));
       if (hit) caught++;
