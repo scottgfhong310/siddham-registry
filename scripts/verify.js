@@ -265,15 +265,32 @@ check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的
     }
     const si = Object.fromEntries(w.SID_SYL_COLS.map((c, i) => [c, i]));
     const nComp = w.SID_COMPOSITION.reduce((n, x) => n + (Array.isArray(x) ? x.length : 0), 0);
+    // ⚠️ 這是本條唯一「讀不出來會安靜地變成 0」的地方：欄名一改 si.latin 就是 undefined，
+    //    於是 (r[undefined] || '') 對每一列都是 ''、下面幾個統計全部歸零，而檢查照樣通過。
+    //    ⇒ 錨點要釘在 si.latin 本身，不是釘在它算出來的數字上。
+    if (!Number.isInteger(si.latin)) return '產物讀不出 latin 欄（SID_SYL_COLS 的欄名變了？）';
     const mark = (ch) => w.SID_SYLLABLES.filter((r) => (r[si.latin] || '').includes(ch)).length;
+    // 結構性計數：**0 就表示產物壞了**
     const real = {
       glyphs: w.SID_GLYPHS.length, syllables: w.SID_SYLLABLES.length,
       comp: nComp, cells: w.SID_CELLS.length,
       faces: w.SID_FACES.length, chapters: w.SID_CHAPTERS.length,
+    };
+    // 內容性計數：**0 是合法的資料狀態**，不是讀不出來
+    const tally = {
       u0310: mark('\u0310'), u0325: mark('\u0325'), u0304: mark('\u0304'), u0332: mark('\u0332'),
+      precomposed: w.SID_SYLLABLES.filter((r) => /[ṛṝḷḹ]/.test(r[si.latin] || '')).length,
     };
     // ⚠️ 前提不成立就 FAIL，不可以當成「沒有數字要檢查」而通過（空轉的檢查比沒有檢查更糟）。
-    for (const [k, v] of Object.entries(real)) if (!Number.isInteger(v) || v <= 0) return `產物讀不出 ${k}`;
+    // ⚠️⚠️ 但**前提要分兩種**，而這正是 2026-09-05 修掉的那個 bug：本條原本一律要求 `> 0`，
+    //    於是 2026-08-28（家族 v1.99）把 `r`+U+0325 換成預組 ṛ/ṝ/ḷ/ḹ 之後 `u0325` **合法地變成 0**，
+    //    守衛在第一個 0 就 return ⇒ **後面那二十幾條「文件 vs 產物」的比對整整 8 天一次都沒跑過**
+    //    （期間 syllables 6,900 → 6,874 在 10 處漂掉、沒有任何東西吵；連 --selftest 都因為
+    //    「未改壞時必須全綠」這條前提而整支停擺）。
+    //    **判準：一道防「空轉」的守衛，不可以把「這個數字真的是 0」也算成空轉。**
+    for (const [k, v] of Object.entries(real))  if (!Number.isInteger(v) || v <= 0) return `產物讀不出 ${k}`;
+    for (const [k, v] of Object.entries(tally)) if (!Number.isInteger(v))           return `產物讀不出 ${k}`;
+    Object.assign(real, tally);
 
     const grp = (n) => n.toLocaleString('en-US');   // 6899 -> "6,899"
     // [檔案, 這個檔裡該出現的 (正則, 期望值) …]。⚠️ 比對的是**帶千分位的整數**，
@@ -281,13 +298,22 @@ check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的
     const targets = [
       ['README.md',        [[/([\d,]+) glyphs/, real.glyphs], [/([\d,]+) syllables/, real.syllables],
                             [/([\d,]+) composition links/, real.comp], [/([\d,]+) chapter cells/, real.cells]]],
-      ['README.zh-Hant.md',[[/([\d,]+) 字形/, real.glyphs], [/([\d,]+) 音節/, real.syllables],
+      ['README.zh-Hant.md',[[/([\d,]+) 字形/, real.glyphs],
+                            // ⚠️ 「個?」不可省：第 15 行寫的是「6,874 **個**音節」，
+                            //    少了它那一處**從來沒有被看守過**（2026-09-05 補）。
+                            [/([\d,]+) 個?音節/, real.syllables],
                             [/([\d,]+) 個組字關聯/, real.comp], [/([\d,]+) 個章格/, real.cells]]],
       ['README.ja.md',     [[/([\d,]+) 字形/, real.glyphs], [/([\d,]+) 音節/, real.syllables],
                             [/([\d,]+) 組字リンク/, real.comp], [/([\d,]+) 章セル/, real.cells]]],
       ['app.js',           [[/([\d,]+) 個字形/, real.glyphs], [/([\d,]+) 個音節/, real.syllables]]],
       ['CLAUDE.md',        [[/([\d,]+) 個音節是靜態產物/, real.syllables]]],
-      ['DESIGN.md',        [[/`U\+0332` 底線 \*\*([\d,]+)\*\*/, real.u0332],
+      // ⚠️ 四個附標**全部**上錨點（原本只有 U+0332）——2026-08-28 那次讓其中三個變成 0，
+      //    而沒有錨點的數字漂了也沒有人會知道。預組那個數字同理。
+      ['DESIGN.md',        [[/`U\+0310` candrabindu \*\*([\d,]+) 個音節\*\*/, real.u0310],
+                            [/`U\+0325` 環下 \*\*([\d,]+)\*\*/, real.u0325],
+                            [/`U\+0304` macron \*\*([\d,]+)\*\*/, real.u0304],
+                            [/`U\+0332` 底線 \*\*([\d,]+)\*\*/, real.u0332],
+                            [/現況 \*\*([\d,]+) 個音節\*\*/, real.precomposed],
                             [/影響 ([\d,]+)\/([\d,]+)/, real.u0310, real.syllables]]],
     ];
     const bad = [];
@@ -308,7 +334,14 @@ check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的
       }
     }
     // 控制器與 CSS 的註解裡也各有一份
-    const cssRe = [[/U\+0332 底線（([\d,]+)）/, real.u0332], [/影響 ([\d,]+)\/([\d,]+) 個音節/, real.u0310, real.syllables]];
+    const cssRe = [
+      [/U\+0310 candrabindu（([\d,]+) 個音節）/, real.u0310],
+      [/U\+0325 環下（([\d,]+)）/, real.u0325],
+      [/U\+0304 macron（([\d,]+)）/, real.u0304],
+      [/U\+0332 底線（([\d,]+)）/, real.u0332],
+      [/預組字元 ṛ\/ṝ\/ḷ\/ḹ 書寫（([\d,]+) 個音節）/, real.precomposed],
+      [/影響 ([\d,]+)\/([\d,]+) 個音節/, real.u0310, real.syllables],
+    ];
     for (const [re, ...want] of cssRe) {
       const all = [...SRC.css.matchAll(new RegExp(re.source, 'g'))];
       if (!all.length) { bad.push(`css：找不到錨點 ${re}`); continue; }
@@ -382,7 +415,7 @@ const SELFTESTS = [
     'render(); modalInst().open(); },', 'render(); modal.open(); },')],
   [15, '明細卡不再問當下的實例', () => patch('glyph-detail.js',
     'return window.M.Modal.getInstance(el) || window.M.Modal.init(el',
-    'return window.M.Modal.init(el')],,
+    'return window.M.Modal.init(el')],
   // ⚠️ patch() 只改 APP 底下的檔，而第 ⑯ 條有一半的目標在 repo 根（README／app.js／…）——
   //    所以這兩個注入一個打 repo 根、一個打 APP 內的註解，各驗一半。
   [16, 'README 的統計數字過期（repo 根）', () => {
@@ -394,8 +427,16 @@ const SELFTESTS = [
     return () => fs.writeFileSync(p, before);
   }],
   [16, '控制器註解的字數過期', () => patch('siddham-registry.js',
-    /一次貼 [\d,]+ 張卡/, '一次貼 1,234 張卡')]
+    /一次貼 [\d,]+ 張卡/, '一次貼 1,234 張卡')],
+  // ⚠️ 這一個守的是 2026-09-05 那個 bug 的**反面**：欄名一改，四個附標統計會
+  //    **安靜地全部歸零**而檢查照樣通過（舊寫法靠 `> 0` 擋，而那同時把合法的 0 也擋掉了）。
+  //    ⇒ 錨點改釘在 si.latin 本身，這個注入證明它真的在擋。
+  [16, 'latin 欄名改掉（四個附標統計會安靜地全部歸零）', () => patch('data/siddham-syllables.js',
+    '["notation","siddham","latin"]', '["notation","siddham","latinX"]')]
 ];
+// ⚠️ 「合法的 0 必須放行」沒有獨立注入——它由 runner 的「未改壞時必須全綠」那條前提守著
+//    （現況 u0325／u0304／u0332 三者都是 0，改回舊守衛就會當場紅）。
+//    ⚠️ 代價講明：哪天資料又出現 U+0325，這一層覆蓋就會**安靜地消失**。
 
 /** 改壞一個檔案，回傳還原函式。⚠️ 會先斷言注入真的改到東西——
  *  一個什麼都沒改到的注入，與一條失效的檢查，在輸出上長得一模一樣。 */
