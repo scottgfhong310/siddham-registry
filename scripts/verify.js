@@ -314,6 +314,7 @@ check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的
                             [/`U\+0304` macron \*\*([\d,]+)\*\*/, real.u0304],
                             [/`U\+0332` 底線 \*\*([\d,]+)\*\*/, real.u0332],
                             [/現況 \*\*([\d,]+) 個音節\*\*/, real.precomposed],
+                            [/\*\*那 ([\d,]+) 個預組字元不需要這個堆疊\*\*/, real.precomposed],
                             [/影響 ([\d,]+)\/([\d,]+)/, real.u0310, real.syllables]]],
     ];
     const bad = [];
@@ -340,6 +341,7 @@ check('⑯ 散在文件與註解裡的統計數字，必須等於出貨產物的
       [/U\+0304 macron（([\d,]+)）/, real.u0304],
       [/U\+0332 底線（([\d,]+)）/, real.u0332],
       [/預組字元 ṛ\/ṝ\/ḷ\/ḹ 書寫（([\d,]+) 個音節）/, real.precomposed],
+      [/那 ([\d,]+) 個預組字元不需要這個堆疊/, real.precomposed],
       [/影響 ([\d,]+)\/([\d,]+) 個音節/, real.u0310, real.syllables],
     ];
     for (const [re, ...want] of cssRe) {
