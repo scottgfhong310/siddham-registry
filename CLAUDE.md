@@ -16,6 +16,7 @@
 ```
 app.js                                   # Express：port 3000；static；/ → 302 /apps/siddham-registry/
 scripts/verify.js                        # 15 條契約檢查（npm run verify；--selftest 18 個注入）
+scripts/sync-copies.sh                   # 回灌 InProgress 鏡像（①前端整包／②確認沒有 route／③驗 6 個借來的共用件）
 public/apps/siddham-registry/
 ├─ index.html · chapters.html            # 兩頁：字形對照／悉曇十八章
 ├─ siddham-registry.css                  # 主題 token ＋ 兩頁樣式
@@ -34,7 +35,12 @@ public/apps/siddham-registry/
 npm install && npm start        # → http://localhost:3000/apps/siddham-registry/
 npm run verify                  # 15 條契約檢查
 node scripts/verify.js --selftest   # 逐條改壞，確認每條真的抓得到
+./scripts/sync-copies.sh        # 回灌 InProgress 鏡像（改完前端一定要跑，否則 3001 上是舊版）
 ```
+
+⚠️ **本 app 零後端 ⇒ 回灌後不必重啟 monolith**（靜態檔每次請求現讀）。
+⚠️ `data/*.js` 是匯出產物，`sync-copies.sh` 只把 repo 現況推過去——
+**它證明不了 repo 那一份與 `db_siddham` 一致**，那要另外跑 `s4-export.js --check`。
 
 ## 本 app 的 canon 重點 / 注意
 
