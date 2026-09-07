@@ -15,7 +15,7 @@
 
 ```
 app.js                                   # Express：port 3000；static；/ → 302 /apps/siddham-registry/
-scripts/verify.js                        # 15 條契約檢查（npm run verify；--selftest 18 個注入）
+scripts/verify.js                        # 16 條契約檢查（npm run verify；--selftest 21 個注入）
 scripts/sync-copies.sh                   # 回灌 InProgress 鏡像（①前端整包／②確認沒有 route／③驗 6 個借來的共用件）
 public/apps/siddham-registry/
 ├─ index.html · chapters.html            # 兩頁：字形對照／悉曇十八章
@@ -33,7 +33,7 @@ public/apps/siddham-registry/
 
 ```bash
 npm install && npm start        # → http://localhost:3000/apps/siddham-registry/
-npm run verify                  # 15 條契約檢查
+npm run verify                  # 16 條契約檢查
 node scripts/verify.js --selftest   # 逐條改壞，確認每條真的抓得到
 ./scripts/sync-copies.sh        # 回灌 InProgress 鏡像（改完前端一定要跑，否則 3001 上是舊版）
 ```
