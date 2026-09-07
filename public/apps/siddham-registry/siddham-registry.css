@@ -66,6 +66,12 @@ a { color: var(--accent); }
 .head .spacer { flex: 1; }
 .head .input-field { margin: 0; width: 260px; }
 .head .input-field input { margin: 0; height: 38px; }
+/* ⚠️ box-sizing 要用 #search（1,0,0）：共用件 filter-clear.css 加了
+ * `padding-right: 34px !important`，而 Materialize 的 `input[type=text]:not(.browser-default)`
+ * 是 content-box ⇒ 框比 .filter-clear-wrap 寬 34px，底線畫到 #count 底下、點擊區也蓋過它
+ * （2026-09-07 實測 18px）。上面那條 `.head .input-field input` 是 (0,2,1)＝與 Materialize
+ * 同分、只靠載入順序贏，不拿來擔這件事；檔頭的 `* { box-sizing }` (0,0,0) 更是從來沒生效過。 */
+#search { box-sizing: border-box; }
 
 /* ── 字型未安裝的告示（不要留白，§11.1）───────────────────────────── */
 .font-notice {
